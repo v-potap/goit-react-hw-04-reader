@@ -9,26 +9,11 @@ import Controls from '../Controls/Controls';
 import styles from './Reader.module.css';
 
 export default class Reader extends Component {
-  static defaultProps = {
-    index: 0,
-  };
-
-  static propTypes = {
-    items: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
-        text: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-    index: PropTypes.number.isRequired,
-  };
-
   constructor(props) {
     super(props);
 
     this.state = {
-      pubs: this.props.items,
+      pubs: this.props.publications,
       index: 0,
     };
   }
@@ -38,16 +23,16 @@ export default class Reader extends Component {
     const { pubs } = this.state;
 
     const index = Math.max(0, Math.min(item, pubs.length) - 1);
-    console.log('item, index :', item, index);
     this.setState({ index });
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { index } = this.state;
+    const { pathname } = this.props.location;
 
     if (index !== prevState.index) {
       this.props.history.push({
-        pathname: this.props.location.pathname,
+        pathname,
         search: `item=${this.state.index + 1}`,
       });
     }
@@ -76,3 +61,18 @@ export default class Reader extends Component {
     );
   }
 }
+
+Reader.propTypes = {
+  publications: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+  index: PropTypes.number,
+};
+
+Reader.defaultProps = {
+  index: 0,
+};
